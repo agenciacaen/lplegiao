@@ -1032,10 +1032,8 @@ img { max-width: 100%; height: auto; display: block; }
 
 .s3__zoom-layer {
     position: absolute;
-    inset: 0; /* Ocupa todo o viewport para alinhar coordenadas */
     z-index: 10;
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1054,7 +1052,6 @@ img { max-width: 100%; height: auto; display: block; }
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: 0 5vw; /* Margem lateral garantida em todos os elementos */
 }
 
 .s3__zoom-container .hero-v2-tag {
@@ -1236,11 +1233,9 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    /* .s3 { height: auto; }  -- Removido para manter 300vh */
-    /* .s3__viewport { height: auto; position: relative; display: block; padding: 96px 24px; } -- Removido para manter sticky */
-    .s3__zoom-layer { margin-bottom: 64px; } 
+    .s3__zoom-container { padding: 0 5vw; } /* Margem apenas no mobile */
+    .s3__zoom-layer { position: absolute; inset: 0; height: 100%; margin-bottom: 64px; } 
     .s3__zoom-title { font-size: 36px; white-space: normal; }
-    /* .s3__content-layer { position: relative; opacity: 1; transform: none; display: block; padding: 0; } -- Removido */
     .s3__lead { font-size: 24px; }
     .s3__detail-icon { width: 48px; height: 48px; font-size: 20px; }
 }
@@ -1284,13 +1279,12 @@ img { max-width: 100%; height: auto; display: block; }
 
 .s4__title {
     font-family: 'Playfair Display', serif;
-    font-size: 5.5vw; /* Medida responsiva para linha única */
+    font-size: 36px; /* H2 Section Rule Original */
     line-height: 1.1;
     font-weight: 900;
     letter-spacing: -0.025em; /* tracking-tight */
     color: #fff;
     text-transform: uppercase;
-    white-space: nowrap; /* Força linha única */
 }
 
 .s4__title .letter {
@@ -1462,10 +1456,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    /* .s4 { min-height: auto; height: auto; } -- Removido para manter 350vh */
-    /* .s4__title-sticky { position: relative; height: auto; min-height: 60vh; } -- Removido para manter sticky */
-    /* .s4__title { font-size: 28px; } -- Removido, agora usa 5.5vw */
-    /* .s4__content-reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; padding-top: 0; } -- Removido para manter a animação scroll-driven */
+    .s4__title { font-size: 5.5vw; white-space: nowrap; } /* Linha única apenas no mobile */
 }
 
 .s4__card-tag {
