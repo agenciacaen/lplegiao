@@ -91,6 +91,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ──────────────────────────────────────────────
+    // 3.1 Force All Videos Play (iOS/Autoplay Fix)
+    // ──────────────────────────────────────────────
+    const allVideos = document.querySelectorAll('video');
+    
+    if (allVideos.length > 0) {
+        const forcePlayAll = () => {
+            allVideos.forEach(v => {
+                if (v.paused) {
+                    v.play().catch(err => {
+                        // Silencioso
+                    });
+                }
+            });
+        };
+
+        // Tenta imediatamente e após delays
+        forcePlayAll();
+        setTimeout(forcePlayAll, 1000);
+        setTimeout(forcePlayAll, 3000);
+
+        // Eventos de interação para vencer restrições de browser
+        ['touchstart', 'mousedown', 'wheel', 'keydown'].forEach(evt => {
+            document.addEventListener(evt, forcePlayAll, { once: true, passive: true });
+        });
+
+        // Garantir que vídeos retomem se pausados por economia de energia ao scrollar
+        window.addEventListener('scroll', () => {
+            forcePlayAll();
+        }, { passive: true });
+    }
+
+    // ──────────────────────────────────────────────
     // 4. Smooth Scroll for Anchor Links
     // ──────────────────────────────────────────────
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
