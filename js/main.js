@@ -173,8 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Curva de zoom responsiva — começa visível desde o primeiro scroll
             const scale = 1 + (Math.pow(zoomProgress, 1.5) * MAX_SCALE);
             
-            // Fade out só começa na metade do scroll, suave até o fim
-            const zoomOpacity = zoomProgress < 0.5 ? 1 : 1 - ((zoomProgress - 0.5) / 0.5);
+            // Fade out só no finalzinho do scroll para manter o foco
+            const zoomOpacity = zoomProgress < 0.8 ? 1 : 1 - ((zoomProgress - 0.8) / 0.2);
             
             // Aplicar transformações
             s3ZoomLayer.style.transform = `translate3d(0,0,0) scale3d(${scale}, ${scale}, 1) rotate(0.01deg)`;

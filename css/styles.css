@@ -41,9 +41,14 @@
     box-sizing: border-box;
 }
 
-html, body {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
+html {
+    max-width: 100%;
+    overflow-x: clip; /* Clip não quebra sticky em navegadores modernos */
+}
+
+body {
+    max-width: 100%;
+    overflow-x: clip;
     scroll-behavior: smooth;
 }
 
@@ -1233,7 +1238,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .s3 { height: 200vh; } /* Menos scroll no mobile */
+    .s3 { height: 300vh; } /* Voltando para 300vh para garantir tempo de sticky */
     .s3__zoom-container { padding: 0 5vw; }
     .s3__zoom-layer { position: absolute; inset: 0; height: 100%; margin-bottom: 64px; } 
     .s3__zoom-title { font-size: 36px; white-space: normal; }
@@ -1457,7 +1462,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .s4 { min-height: 250vh; } /* Menos scroll no mobile */
+    .s4 { min-height: 350vh; } /* Voltando para 350vh para garantir tempo de sticky */
     .s4__title { font-size: 5.5vw; white-space: nowrap; }
 }
 
