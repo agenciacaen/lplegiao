@@ -121,93 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ──────────────────────────────────────────────
-    // 6. Seção 2 – Scroll-Driven Text Panels
-    //    O scroll vertical controla o translateX
-    //    dos painéis horizontalmente
-    // ──────────────────────────────────────────────
-    const s2Section = document.getElementById('antes-de-tudo');
-    const s2Track = document.getElementById('s2Track');
-    const s2Panels = document.querySelectorAll('.s2__panel');
-    const TOTAL_PANELS = s2Panels.length; // 8 (0-7)
+    // Seção 2 removida (agora estática via CSS)
 
-    const isDesktopS2 = () => window.innerWidth > 768;
-
-    if (s2Section && s2Track && TOTAL_PANELS > 0 && isDesktopS2()) {
-
-        let s2Top = s2Section.offsetTop;
-        let s2Height = s2Section.offsetHeight;
-        let s2Scrollable = 0;
-        let s2InView = false;
-        let currentTranslate = 0;
-        let currentActivePanel = -1;
-        const S2_LERP = 0.12;
-
-        const recalcS2 = () => {
-            s2Top = s2Section.offsetTop;
-            s2Height = s2Section.offsetHeight;
-            s2Scrollable = s2Height - window.innerHeight;
-            if (s2Scrollable <= 0) s2Scrollable = 1;
-        };
-
-        const animateS2 = () => {
-            if (!s2InView || !isDesktopS2()) return;
-
-            const scrolled = window.scrollY - s2Top;
-            const progress = Math.min(Math.max(scrolled / s2Scrollable, 0), 1);
-
-            const maxTranslate = (TOTAL_PANELS - 1) * window.innerWidth;
-            const targetTranslate = progress * maxTranslate;
-
-            const diff = targetTranslate - currentTranslate;
-            if (Math.abs(diff) > 0.1) {
-                currentTranslate += diff * S2_LERP;
-            } else {
-                currentTranslate = targetTranslate;
-            }
-
-            s2Track.style.transform = `translate3d(${-currentTranslate}px, 0, 0)`;
-
-            const progressBar = document.getElementById('s2ProgressBar');
-            if (progressBar) progressBar.style.width = `${progress * 100}%`;
-
-            const activeIndex = Math.min(Math.round(progress * (TOTAL_PANELS - 1)), TOTAL_PANELS - 1);
-
-            if (activeIndex !== currentActivePanel) {
-                s2Panels.forEach((panel, i) => {
-                    panel.classList.toggle('active', i === activeIndex);
-                });
-                currentActivePanel = activeIndex;
-            }
-
-            requestAnimationFrame(animateS2);
-        };
-
-        const s2Observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                s2InView = entry.isIntersecting;
-                if (s2InView && isDesktopS2()) requestAnimationFrame(animateS2);
-            });
-        }, { threshold: 0.01 });
-
-        s2Observer.observe(s2Section);
-        window.addEventListener('resize', recalcS2);
-        recalcS2();
-
-    } else if (s2Panels.length > 0 && !isDesktopS2()) {
-        // Mobile: mostra todos os painéis
-        s2Panels.forEach(p => p.classList.add('active'));
-    }
 
     // ──────────────────────────────────────────────
     // 7. SEÇÃO 3 – O QUE É A LEGIÃO (Zoom & Reveal)
     // ──────────────────────────────────────────────
     const s3Section = document.getElementById('o-que-e-a-legiao');
     const s3ZoomLayer = document.getElementById('s3ZoomLayer');
-    const s3ContentLayer = document.getElementById('s3ContentLayer');
     const s3ZoomTarget = document.querySelector('.s3__zoom-target');
 
-    if (s3Section && s3ZoomLayer && s3ContentLayer && s3ZoomTarget) {
+    if (s3Section && s3ZoomLayer && s3ZoomTarget) {
         
         const isDesktopS3 = () => window.innerWidth > 768;
 
@@ -243,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 s3CurrentProgress = targetProgress;
             }
 
-            const zoomProgress = Math.min(s3CurrentProgress / 0.75, 1);
+            const zoomProgress = s3CurrentProgress;
             
             // Curva de zoom mais suave
             const scale = 1 + (Math.pow(zoomProgress, 3) * MAX_SCALE);
@@ -254,15 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Aplicar transformações
             s3ZoomLayer.style.transform = `translate3d(0,0,0) scale3d(${scale}, ${scale}, 1) rotate(0.01deg)`;
             s3ZoomLayer.style.opacity = Math.max(zoomOpacity, 0);
-            
-            // Fase 2: Revelação do Conteúdo (Inicia em 65%)
-            if (s3CurrentProgress > 0.62) {
-                s3ContentLayer.classList.add('active');
-                s3ContentLayer.style.pointerEvents = 'auto';
-            } else {
-                s3ContentLayer.classList.remove('active');
-                s3ContentLayer.style.pointerEvents = 'none';
-            }
 
             requestAnimationFrame(animateS3);
         };
@@ -688,163 +603,95 @@ document.addEventListener('DOMContentLoaded', () => {
     function initSection13() {
         const section = document.querySelector('.s13');
         const roleCards = document.querySelectorAll('.s13__role-card');
+        const videos = section.querySelectorAll('video');
         if (!section || roleCards.length === 0) return;
 
-        let sectionTop = 0;
-        let sectionHeight = 0;
-        let lerpProgress = 0;
-        let targetProgress = 0;
-        let inView = false;
-        const LERP_FACTOR = 0.08;
-
-        const recalc = () => {
-            const rect = section.getBoundingClientRect();
-            sectionTop = rect.top + window.scrollY;
-            sectionHeight = section.offsetHeight;
-        };
-
-        const updateElements = (progress) => {
-            roleCards.forEach((card, index) => {
-                const videos = card.querySelectorAll('video');
-                const reveal = card.querySelector('.s13__cards-reveal');
-                
-                // 1. Video Scrubbing
-                videos.forEach(video => {
-                    if (video.duration && !isNaN(video.duration)) {
-                        const targetTime = progress * (video.duration - 0.05);
-                        if (Math.abs(video.currentTime - targetTime) > 0.01) {
-                            video.currentTime = targetTime;
-                        }
-                    }
-                });
-
-                // 2. Reveal Cards (Staggered thresholds)
-                // General: 15% - 40%
-                // Bobo: 45% - 70%
-                // Centurião: 75% - 100%
-                const thresholds = [
-                    { start: 0.15, end: 0.40 }, // General
-                    { start: 0.45, end: 0.70 }, // Bobo
-                    { start: 0.75, end: 0.95 }  // Centurião
-                ];
-
-                const t = thresholds[index];
-                if (t) {
-                    let cardOpacity = 0;
-                    let cardY = 20;
-
-                    if (progress > t.start) {
-                        // Calcula progresso interno do threshold para suavizar a entrada
-                        const innerProg = Math.min(1, (progress - t.start) / (t.end - t.start));
-                        cardOpacity = innerProg;
-                        cardY = 20 * (1 - innerProg);
-                    }
-
-                    if (reveal) {
-                        reveal.style.opacity = cardOpacity;
-                        reveal.style.transform = `translateY(${cardY}px)`;
-                    }
-                }
-            });
-        };
-
-        const animate = () => {
-            if (!inView) return;
-
-            const scrolled = window.scrollY - sectionTop;
-            const viewHeight = window.innerHeight;
-            const scrollable = sectionHeight - viewHeight;
-            
-            targetProgress = Math.max(0, Math.min(1, scrolled / (scrollable > 0 ? scrollable : 1)));
-
-            const diff = targetProgress - lerpProgress;
-            if (Math.abs(diff) > 0.0001) {
-                lerpProgress += diff * LERP_FACTOR;
-            } else {
-                lerpProgress = targetProgress;
+        // Garante que as fichas de conteúdo estejam visíveis agora que é estático
+        roleCards.forEach(card => {
+            const reveal = card.querySelector('.s13__cards-reveal');
+            if (reveal) {
+                reveal.style.opacity = '1';
+                reveal.style.transform = 'translateY(0)';
             }
-
-            updateElements(lerpProgress);
-            requestAnimationFrame(animate);
-        };
+        });
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                inView = entry.isIntersecting;
-                if (inView) {
-                    recalc();
-                    requestAnimationFrame(animate);
-                }
+                const inView = entry.isIntersecting;
+                videos.forEach(video => {
+                    if (inView) {
+                        video.play().catch(() => {});
+                    } else {
+                        video.pause();
+                    }
+                });
             });
-        }, { threshold: 0 });
+        }, { threshold: 0.1 });
 
         observer.observe(section);
-        window.addEventListener('resize', recalc);
-        window.addEventListener('load', recalc);
-        recalc();
     }
 
     initSection13();
 
     function initSection14() {
         const section = document.querySelector('.s14');
-        const track = document.querySelector('.s14__track');
-        if (!section || !track) return;
+        const cards = document.querySelectorAll('.s14__item-card');
+        const prevBtn = document.querySelector('.s14__nav--prev');
+        const nextBtn = document.querySelector('.s14__nav--next');
+        const dotsContainer = document.querySelector('.s14__dots');
+        
+        if (!section || cards.length === 0) return;
 
-        let sectionTop = 0;
-        let sectionHeight = 0;
-        let windowHeight = window.innerHeight;
-        let targetX = 0;
-        let currentX = 0;
-        let sectionInView = false;
+        let currentIndex = 0;
 
-        const recalc = () => {
-            const rect = section.getBoundingClientRect();
-            sectionTop = rect.top + window.scrollY;
-            sectionHeight = rect.height;
-            windowHeight = window.innerHeight;
-        };
+        // Criar dots
+        cards.forEach((_, idx) => {
+            const dot = document.createElement('div');
+            dot.classList.add('s14__dot');
+            if (idx === 0) dot.classList.add('is-active');
+            dot.addEventListener('click', () => goToSlide(idx));
+            dotsContainer.appendChild(dot);
+        });
 
-        const animate = () => {
-            if (!sectionInView && Math.abs(targetX - currentX) < 0.1) return;
+        const dots = document.querySelectorAll('.s14__dot');
 
-            const scrollY = window.scrollY;
-            const relativeScroll = scrollY - sectionTop;
-            const scrollRange = sectionHeight - windowHeight;
-            
-            // Calcula o progresso (0 a 1)
-            let progress = Math.max(0, Math.min(1, relativeScroll / scrollRange));
-            
-            // Calcula o deslocamento máximo do track
-            const trackWidth = track.offsetWidth;
-            const maxDelta = trackWidth - window.innerWidth;
-            
-            targetX = progress * maxDelta * -1;
-
-            // Lerp para suavidade (Fator 0.07 para horizontal scroll cinematográfico)
-            currentX += (targetX - currentX) * 0.07;
-
-            track.style.transform = `translate3d(${currentX}px, 0, 0)`;
-
-            if (sectionInView || Math.abs(targetX - currentX) > 0.1) {
-                requestAnimationFrame(animate);
-            }
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                sectionInView = entry.isIntersecting;
-                if (sectionInView) {
-                    recalc();
-                    requestAnimationFrame(animate);
+        function updateCarousel() {
+            cards.forEach((card, idx) => {
+                card.classList.remove('is-active', 'is-next', 'is-prev');
+                if (idx === currentIndex) {
+                    card.classList.add('is-active');
+                } else if (idx > currentIndex) {
+                    card.classList.add('is-next');
+                } else {
+                    card.classList.add('is-prev');
                 }
             });
-        }, { threshold: 0.01 });
 
-        observer.observe(section);
-        window.addEventListener('resize', recalc);
-        window.addEventListener('load', recalc);
-        recalc();
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('is-active', idx === currentIndex);
+            });
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateCarousel();
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % cards.length;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            updateCarousel();
+        }
+
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+        // Auto-play opcional ou Swipe?
+        // Por enquanto apenas manual para foco na doutrina.
     }
 
     initSection14();
@@ -1004,78 +851,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==========================================================================
        SEÇÃO 18: A TRAVESSIA (Timeline Horizontal Sticky)
        ========================================================================== */
-    function initSection18() {
-        const section = document.querySelector('.s18');
-        const timeline = document.querySelector('.s18__timeline');
-        const milestones = document.querySelectorAll('.s18__milestone');
-        if (!section || !timeline) return;
 
-        let sectionTop = 0;
-        let sectionHeight = 0;
-        let targetX = 0;
-        let currentX = 0;
-        let sectionInView = false;
-        const LERP_FACTOR = 0.08;
-
-        const recalc = () => {
-            const rect = section.getBoundingClientRect();
-            sectionTop = rect.top + window.scrollY;
-            sectionHeight = rect.height;
-        };
-
-        const animate = () => {
-            if (!sectionInView && Math.abs(targetX - currentX) < 0.1) return;
-
-            const scrolled = window.scrollY - sectionTop;
-            const scrollableHeight = sectionHeight - window.innerHeight;
-            let progress = Math.max(0, Math.min(1, scrolled / (scrollableHeight > 0 ? scrollableHeight : 1)));
-
-            // Deslocamento horizontal: o quanto a timeline precisa andar para mostrar o fim
-            const timelineWidth = timeline.scrollWidth;
-            const windowWidth = window.innerWidth;
-            const maxDelta = Math.max(0, timelineWidth - windowWidth);
-            
-            targetX = progress * maxDelta * -1;
-
-            // Suavização (Lerp) - Fator ligeiramente menor para mais inércia
-            currentX += (targetX - currentX) * 0.06;
-
-            timeline.style.transform = `translate3d(${currentX}px, 0, 0)`;
-
-            // Destaque do Milestone ativo (quando o ponto central cruza a maior parte da tela)
-            milestones.forEach(m => {
-                const mRect = m.getBoundingClientRect();
-                const mCenter = mRect.left + (mRect.width / 2);
-                // Faixa de ativação mais ampla (10% a 90% da tela)
-                if (mCenter < windowWidth * 0.9 && mCenter > windowWidth * 0.1) {
-                    m.classList.add('in-view');
-                } else {
-                    m.classList.remove('in-view');
-                }
-            });
-
-            if (sectionInView || Math.abs(targetX - currentX) > 0.1) {
-                requestAnimationFrame(animate);
-            }
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                sectionInView = entry.isIntersecting;
-                if (sectionInView) {
-                    recalc();
-                    requestAnimationFrame(animate);
-                }
-            });
-        }, { threshold: 0.01 });
-
-        observer.observe(section);
-        window.addEventListener('resize', recalc);
-        window.addEventListener('load', recalc);
-        recalc();
-    }
-
-    initSection18();
 
     /* ==========================================================================
        SEÇÃO 19: FAQ (Accordion Logic)
