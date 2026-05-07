@@ -1058,8 +1058,7 @@ img { max-width: 100%; height: auto; display: block; }
     pointer-events: none;
     will-change: transform, opacity;
     backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: geometricPrecision;
+    -webkit-backface-visibility: hidden;
     contain: paint;
 }
 
@@ -1086,6 +1085,7 @@ img { max-width: 100%; height: auto; display: block; }
     height: auto;
     display: block;
     overflow: visible;
+    shape-rendering: optimizeSpeed;
 }
 
 .s3__zoom-target {
