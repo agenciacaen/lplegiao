@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const animateS3 = () => {
-            if (!s3InView || !isDesktopS3()) return;
+            if (!s3InView) return;
 
             const scrolled = window.scrollY - s3Top;
             const targetProgress = Math.min(Math.max(scrolled / s3Scrollable, 0), 1);
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 s3InView = entry.isIntersecting;
-                if (s3InView && isDesktopS3()) {
+                if (s3InView) {
                     requestAnimationFrame(animateS3);
                 }
             });

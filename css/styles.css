@@ -1231,11 +1231,11 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .s3 { height: auto; }
-    .s3__viewport { height: auto; position: relative; display: block; padding: 96px 24px; }
-    .s3__zoom-layer { position: relative; transform: none !important; opacity: 1 !important; margin-bottom: 64px; }
+    /* .s3 { height: auto; }  -- Removido para manter 300vh */
+    /* .s3__viewport { height: auto; position: relative; display: block; padding: 96px 24px; } -- Removido para manter sticky */
+    .s3__zoom-layer { margin-bottom: 64px; } 
     .s3__zoom-title { font-size: 36px; white-space: normal; }
-    .s3__content-layer { position: relative; opacity: 1; transform: none; display: block; padding: 0; }
+    /* .s3__content-layer { position: relative; opacity: 1; transform: none; display: block; padding: 0; } -- Removido */
     .s3__lead { font-size: 24px; }
     .s3__detail-icon { width: 48px; height: 48px; font-size: 20px; }
 }
