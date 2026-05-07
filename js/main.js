@@ -211,9 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(s3Section);
 
         window.addEventListener('resize', recalcS3);
+        window.addEventListener('load', recalcS3);
         
         document.fonts.ready.then(() => {
-            recalcS3();
+            setTimeout(recalcS3, 100); 
         });
     }
 

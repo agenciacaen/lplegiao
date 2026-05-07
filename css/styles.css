@@ -1032,8 +1032,10 @@ img { max-width: 100%; height: auto; display: block; }
 
 .s3__zoom-layer {
     position: absolute;
+    inset: 0; /* Ocupa todo o viewport para alinhar coordenadas */
     z-index: 10;
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
