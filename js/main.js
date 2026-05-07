@@ -880,5 +880,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initSection19();
+    
+    /* ==========================================================================
+       SEÇÃO 6: DIAGRAMA CHRONOS (Mobile Popup Logic)
+       ========================================================================== */
+    function initSection6Diagram() {
+        const diagramNodes = document.querySelectorAll('.s6__diagram-node');
+        const tooltips = document.querySelectorAll('.s6__diagram-tooltip');
+        
+        // Criar overlay se não existir
+        let overlay = document.querySelector('.s6__diagram-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 's6__diagram-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        // Adicionar botões de fechar aos tooltips
+        tooltips.forEach(tooltip => {
+            if (!tooltip.querySelector('.s6__tooltip-close')) {
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 's6__tooltip-close';
+                closeBtn.innerHTML = '<iconify-icon icon="ph:x-bold"></iconify-icon>';
+                tooltip.appendChild(closeBtn);
+                
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeAllTooltips();
+                });
+            }
+        });
+
+        function closeAllTooltips() {
+            tooltips.forEach(t => t.classList.remove('mobile-active'));
+            overlay.classList.remove('active');
+        }
+
+        diagramNodes.forEach(node => {
+            node.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const tooltip = node.querySelector('.s6__diagram-tooltip');
+                    const isActive = tooltip.classList.contains('mobile-active');
+                    
+                    closeAllTooltips();
+                    
+                    if (!isActive) {
+                        tooltip.classList.add('mobile-active');
+                        overlay.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        overlay.addEventListener('click', closeAllTooltips);
+    }
+
+    initSection6Diagram();
 
 });

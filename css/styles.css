@@ -2335,7 +2335,7 @@ img { max-width: 100%; height: auto; display: block; }
         height: 700px;
     }
     
-    /* Center tooltips on mobile */
+    /* Center tooltips on mobile - Original behavior kept as fallback */
     .s6__diagram-node-1 .s6__diagram-tooltip,
     .s6__diagram-node-2 .s6__diagram-tooltip,
     .s6__diagram-node-3 .s6__diagram-tooltip,
@@ -2348,25 +2348,61 @@ img { max-width: 100%; height: auto; display: block; }
         margin-left: -130px;
         margin-right: 0;
     }
-    
-    .s6__diagram-node-1 .s6__diagram-tooltip,
-    .s6__diagram-node-2 .s6__diagram-tooltip,
-    .s6__diagram-node-5 .s6__diagram-tooltip {
-        top: 100%;
-        margin-top: 16px;
-        transform: translateY(-10px);
+
+    /* Modal Style for Mobile */
+    .s6__diagram-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+        z-index: 9998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: auto;
     }
-    
-    .s6__diagram-node-3 .s6__diagram-tooltip,
-    .s6__diagram-node-4 .s6__diagram-tooltip,
-    .s6__diagram-node-6 .s6__diagram-tooltip {
-        bottom: 100%;
-        margin-bottom: 16px;
-        transform: translateY(10px);
+
+    .s6__diagram-overlay.active {
+        opacity: 1;
+        visibility: visible;
     }
-    
-    .s6__diagram-node:hover .s6__diagram-tooltip {
-        transform: translateY(0);
+
+    .s6__diagram-tooltip.mobile-active {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 85vw !important;
+        max-width: 360px !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 9999 !important;
+        pointer-events: auto !important;
+        margin: 0 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        text-align: left;
+    }
+
+    /* Close button for mobile tooltip */
+    .s6__tooltip-close {
+        display: none;
+    }
+
+    .s6__diagram-tooltip.mobile-active .s6__tooltip-close {
+        display: flex;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
     }
     
     .s6__limitations-card {
