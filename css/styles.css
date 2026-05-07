@@ -1279,12 +1279,13 @@ img { max-width: 100%; height: auto; display: block; }
 
 .s4__title {
     font-family: 'Playfair Display', serif;
-    font-size: 36px; /* H2 Section Rule */
+    font-size: 5.5vw; /* Medida responsiva para linha única */
     line-height: 1.1;
     font-weight: 900;
     letter-spacing: -0.025em; /* tracking-tight */
     color: #fff;
     text-transform: uppercase;
+    white-space: nowrap; /* Força linha única */
 }
 
 .s4__title .letter {
@@ -1458,7 +1459,7 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 768px) {
     /* .s4 { min-height: auto; height: auto; } -- Removido para manter 350vh */
     /* .s4__title-sticky { position: relative; height: auto; min-height: 60vh; } -- Removido para manter sticky */
-    .s4__title { font-size: 28px; } /* Ajuste de fonte para evitar quebra excessiva */
+    /* .s4__title { font-size: 28px; } -- Removido, agora usa 5.5vw */
     /* .s4__content-reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; padding-top: 0; } -- Removido para manter a animação scroll-driven */
 }
 
