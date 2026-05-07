@@ -886,7 +886,6 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================================================== */
     function initSection6Diagram() {
         const diagramNodes = document.querySelectorAll('.s6__diagram-node');
-        const tooltips = document.querySelectorAll('.s6__diagram-tooltip');
         
         // Criar overlay se não existir
         let overlay = document.querySelector('.s6__diagram-overlay');
@@ -896,24 +895,24 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(overlay);
         }
 
-        // Adicionar botões de fechar aos tooltips
-        tooltips.forEach(tooltip => {
-            if (!tooltip.querySelector('.s6__tooltip-close')) {
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 's6__tooltip-close';
-                closeBtn.innerHTML = '<iconify-icon icon="ph:x-bold"></iconify-icon>';
-                tooltip.appendChild(closeBtn);
-                
-                closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    closeAllTooltips();
-                });
-            }
-        });
+        // Criar modal mobile se não existir
+        let mobileModal = document.querySelector('.s6__mobile-modal');
+        if (!mobileModal) {
+            mobileModal = document.createElement('div');
+            mobileModal.className = 's6__mobile-modal';
+            mobileModal.innerHTML = `
+                <div class="s6__mobile-modal-close"><iconify-icon icon="ph:x-bold"></iconify-icon></div>
+                <div class="s6__mobile-modal-content"></div>
+            `;
+            document.body.appendChild(mobileModal);
+            
+            mobileModal.querySelector('.s6__mobile-modal-close').addEventListener('click', closeS6Modal);
+        }
 
-        function closeAllTooltips() {
-            tooltips.forEach(t => t.classList.remove('mobile-active'));
+        function closeS6Modal() {
+            mobileModal.classList.remove('active');
             overlay.classList.remove('active');
+            document.body.style.overflow = ''; // Destrava o scroll
         }
 
         diagramNodes.forEach(node => {
@@ -923,19 +922,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.stopPropagation();
                     
                     const tooltip = node.querySelector('.s6__diagram-tooltip');
-                    const isActive = tooltip.classList.contains('mobile-active');
+                    const title = tooltip.querySelector('.s6__card-title').innerHTML;
+                    const text = tooltip.querySelector('.s6__card-text').innerHTML;
                     
-                    closeAllTooltips();
+                    mobileModal.querySelector('.s6__mobile-modal-content').innerHTML = `
+                        <h4 class="s6__card-title">${title}</h4>
+                        <p class="s6__card-text">${text}</p>
+                    `;
                     
-                    if (!isActive) {
-                        tooltip.classList.add('mobile-active');
-                        overlay.classList.add('active');
-                    }
+                    mobileModal.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Trava o scroll quando modal aberto
                 }
             });
         });
 
-        overlay.addEventListener('click', closeAllTooltips);
+        overlay.addEventListener('click', closeS6Modal);
     }
 
     initSection6Diagram();

@@ -2349,7 +2349,7 @@ img { max-width: 100%; height: auto; display: block; }
         margin-right: 0;
     }
 
-    /* Modal Style for Mobile */
+    /* Modal Style for Mobile (Teleport System) */
     .s6__diagram-overlay {
         position: fixed;
         inset: 0;
@@ -2367,30 +2367,33 @@ img { max-width: 100%; height: auto; display: block; }
         visibility: visible;
     }
 
-    .s6__diagram-tooltip.mobile-active {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        width: 85vw !important;
-        max-width: 360px !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        z-index: 9999 !important;
-        pointer-events: auto !important;
-        margin: 0 !important;
+    .s6__mobile-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 85vw;
+        max-width: 360px;
+        background: var(--bg-surface);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-        text-align: left;
+        padding: 32px 24px;
+        border-radius: 20px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        backdrop-filter: blur(20px);
+        pointer-events: auto;
     }
 
-    /* Close button for mobile tooltip */
-    .s6__tooltip-close {
-        display: none;
+    .s6__mobile-modal.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -50%) scale(1);
     }
 
-    .s6__diagram-tooltip.mobile-active .s6__tooltip-close {
-        display: flex;
+    .s6__mobile-modal-close {
         position: absolute;
         top: 12px;
         right: 12px;
@@ -2398,11 +2401,25 @@ img { max-width: 100%; height: auto; display: block; }
         height: 32px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 50%;
+        display: flex;
         align-items: center;
         justify-content: center;
         color: #fff;
         font-size: 20px;
         cursor: pointer;
+    }
+
+    .s6__mobile-modal-content .s6__card-title {
+        font-size: 18px;
+        margin-bottom: 12px;
+        color: var(--primary);
+        font-weight: 700;
+    }
+
+    .s6__mobile-modal-content .s6__card-text {
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--text-muted);
     }
     
     .s6__limitations-card {
