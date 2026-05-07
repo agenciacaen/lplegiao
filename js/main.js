@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Estado do Lerp
         let s3CurrentProgress = 0;
-        const S3_LERP = 0.12; 
-        const MAX_SCALE = 60; // Aumentado para SVG vetorial, garantindo preenchimento total em 4K
+        const S3_LERP = 0.3; // Mais responsivo ao scroll
+        const MAX_SCALE = 60;
 
         const recalcS3 = () => {
             s3Top = s3Section.offsetTop;
@@ -170,11 +170,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const zoomProgress = s3CurrentProgress;
             
-            // Curva de zoom mais rápida (potência 2 em vez de 3)
-            const scale = 1 + (Math.pow(zoomProgress, 2) * MAX_SCALE);
+            // Curva de zoom responsiva — começa visível desde o primeiro scroll
+            const scale = 1 + (Math.pow(zoomProgress, 1.5) * MAX_SCALE);
             
-            // Fade out
-            const zoomOpacity = zoomProgress < 0.4 ? 1 : 1 - ((zoomProgress - 0.4) / 0.4);
+            // Fade out só começa na metade do scroll, suave até o fim
+            const zoomOpacity = zoomProgress < 0.5 ? 1 : 1 - ((zoomProgress - 0.5) / 0.5);
             
             // Aplicar transformações
             s3ZoomLayer.style.transform = `translate3d(0,0,0) scale3d(${scale}, ${scale}, 1) rotate(0.01deg)`;
@@ -263,8 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let progress = -rect.top / (sectionHeight - viewHeight);
             progress = Math.min(Math.max(progress, 0), 1);
 
-            // 1. FASE 1: Animação de letras (0% a 20% do progresso - Mais rápido)
-            const textProgress = Math.min(progress / 0.2, 1);
+            // 1. FASE 1: Animação de letras (0% a 15% do progresso)
+            const textProgress = Math.min(progress / 0.15, 1);
             const totalLetters = allLetters.length;
             const activeCount = Math.floor(textProgress * totalLetters);
             
@@ -276,30 +276,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // 2. FASE DE TRANSIÇÃO (20% a 35%)
-            if (progress > 0.2) {
-                const transProgress = Math.min((progress - 0.2) / 0.15, 1);
+            // 2. FASE DE TRANSIÇÃO (15% a 28%)
+            if (progress > 0.15) {
+                const transProgress = Math.min((progress - 0.15) / 0.13, 1);
                 
-                // Título desaparece e sobe MAIS RÁPIDO para não sobrepor
+                // Título desaparece
                 if (s4TitleSticky) {
-                    // O título deve sumir completamente antes do transProgress chegar a 0.7
                     const titleOpacity = Math.max(0, 1 - (transProgress * 1.5));
                     s4TitleSticky.style.opacity = titleOpacity;
                     s4TitleSticky.style.transform = `translateY(-${transProgress * 150}px) scale(${1 - transProgress * 0.1})`;
                     s4TitleSticky.style.visibility = titleOpacity <= 0 ? 'hidden' : 'visible';
                 }
 
-                // Conteúdo aparece e sobe (transição mais suave)
+                // Conteúdo aparece
                 if (s4ContentReveal) {
-                    const contentOpacity = Math.min(progress > 0.25 ? (progress - 0.25) / 0.1 : 0, 1);
+                    const contentOpacity = Math.min(progress > 0.2 ? (progress - 0.2) / 0.08 : 0, 1);
                     s4ContentReveal.style.opacity = contentOpacity;
                     s4ContentReveal.style.visibility = contentOpacity > 0 ? 'visible' : 'hidden';
                     s4ContentReveal.style.transform = `translateY(${(1 - contentOpacity) * 100}px)`;
                 }
 
                 // 3. FASE DA TIMELINE
-                if (progress > 0.32) {
-                    let lineProgress = (progress - 0.32) / 0.65;
+                if (progress > 0.25) {
+                    let lineProgress = (progress - 0.25) / 0.72;
                     lineProgress = Math.min(Math.max(lineProgress, 0), 1);
 
                     if (s4TimelineLineActive) {

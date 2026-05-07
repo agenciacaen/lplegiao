@@ -1233,7 +1233,8 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .s3__zoom-container { padding: 0 5vw; } /* Margem apenas no mobile */
+    .s3 { height: 200vh; } /* Menos scroll no mobile */
+    .s3__zoom-container { padding: 0 5vw; }
     .s3__zoom-layer { position: absolute; inset: 0; height: 100%; margin-bottom: 64px; } 
     .s3__zoom-title { font-size: 36px; white-space: normal; }
     .s3__lead { font-size: 24px; }
@@ -1456,7 +1457,8 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .s4__title { font-size: 5.5vw; white-space: nowrap; } /* Linha única apenas no mobile */
+    .s4 { min-height: 250vh; } /* Menos scroll no mobile */
+    .s4__title { font-size: 5.5vw; white-space: nowrap; }
 }
 
 .s4__card-tag {
