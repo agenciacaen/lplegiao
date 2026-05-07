@@ -111,134 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ──────────────────────────────────────────────
-    // 5. Hero Scroll Sequence
-    //    Otimizado para scrub suave com fastSeek,
-    //    lerp lento e throttle de seeks.
+    // 5. Hero Video Autoplay (Static)
     // ──────────────────────────────────────────────
     const heroVideo = document.querySelector('.hero__bg video');
-    const heroSection = document.getElementById('hero');
-    const stageIntro = document.getElementById('stage-intro');
-    const stagePhrase = document.getElementById('stage-phrase');
-    const stageFull = document.getElementById('stage-full');
-    const heroOverlay = document.querySelector('.hero__overlay');
-    const bgGrid = document.querySelector('.bg-grid');
-
-    if (heroVideo && heroSection && stageIntro && stagePhrase && stageFull) {
-        heroVideo.pause();
-
-        // Cache de dimensões
-        let heroTop = 0;
-        let scrollableHeight = 0;
-        let heroInView = false;
-
-        // Stage management
-        let currentStage = 'intro';
-        const setStage = (name) => {
-            if (currentStage === name) return;
-            currentStage = name;
-            stageIntro.classList.toggle('active', name === 'intro');
-            stagePhrase.classList.toggle('active', name === 'phrase');
-            stageFull.classList.toggle('active', name === 'full');
-        };
-
-        // Video scrub state
-        let videoReady = false;
-        let videoDuration = 0;
-        let lerpTime = 0;
-        let lastSeekTime = 0;
-        const SEEK_THRESHOLD = 0.04;
-        const SEEK_THROTTLE = 16;
-
-        const initVideo = () => {
-            videoDuration = heroVideo.duration;
-            if (!videoDuration || !isFinite(videoDuration)) return;
-            videoReady = true;
-        };
-
-        if (heroVideo.readyState >= 1) {
-            initVideo();
-        } else {
-            heroVideo.addEventListener('loadedmetadata', initVideo);
-        }
-
-        const seekVideo = (time) => {
-            const now = performance.now();
-            if (now - lastSeekTime < SEEK_THROTTLE) return;
-            lastSeekTime = now;
-            if (typeof heroVideo.fastSeek === 'function') {
-                heroVideo.fastSeek(time);
-            } else {
-                heroVideo.currentTime = time;
-            }
-        };
-
-        const recalcHero = () => {
-            heroTop = heroSection.offsetTop;
-            const heroHeight = heroSection.offsetHeight;
-            scrollableHeight = heroHeight - window.innerHeight;
-            if (scrollableHeight <= 0) scrollableHeight = 1;
-        };
-
-        // Loop principal de animação
-        const animate = () => {
-            if (!heroInView) return;
-
-            const scrolled = window.scrollY - heroTop;
-            const progress = Math.min(Math.max(scrolled / scrollableHeight, 0), 1);
-
-            // --- Stage Management ---
-            let showOverlay = false;
-
-            if (progress < 0.12) {
-                setStage('intro');
-                showOverlay = true;
-            } else if (progress < 0.50) {
-                setStage('none');
-                showOverlay = false;
-            } else if (progress < 0.68) {
-                setStage('phrase');
-                showOverlay = false;
-            } else {
-                setStage('full');
-                showOverlay = true;
-            }
-
-            if (heroOverlay) heroOverlay.style.opacity = showOverlay ? '1' : '0';
-            if (bgGrid) bgGrid.style.opacity = showOverlay ? '1' : '0';
-
-            // --- Video Scrub ---
-            if (videoReady) {
-                const videoProgress = Math.min(Math.max((progress - 0.05) / 0.85, 0), 1);
-                const targetTime = videoProgress * videoDuration;
-
-                const MAX_SPEED = 0.035;
-                let delta = (targetTime - lerpTime) * 0.04;
-                delta = Math.max(Math.min(delta, MAX_SPEED), -MAX_SPEED);
-                
-                if (Math.abs(delta) > 0.0001) {
-                    lerpTime += delta;
-                } else {
-                    lerpTime = targetTime;
-                }
-
-                if (Math.abs(heroVideo.currentTime - lerpTime) > SEEK_THRESHOLD) {
-                    seekVideo(lerpTime);
-                }
-            }
-
-            requestAnimationFrame(animate);
-        };
-
-        const heroObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                heroInView = entry.isIntersecting;
-                if (heroInView) requestAnimationFrame(animate);
-            });
-        }, { threshold: 0.01 });
-
-        heroObserver.observe(heroSection);
-        window.addEventListener('resize', recalcHero);
-        recalcHero();
+    if (heroVideo) {
+        // Garantimos que o vídeo comece a tocar caso o autoplay falhe
+        heroVideo.play().catch(() => {
+            console.log("Autoplay prevented, waiting for interaction");
+        });
     }
 
     // ──────────────────────────────────────────────
@@ -803,107 +683,105 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ──────────────────────────────────────────────
-    // 13. SEÇÃO 13 – A HIERARQUIA VIVA (Scrub & Reveal)
+    // 13. SEÇÃO 13 – A HIERARQUIA VIVA (Scroll Scrub)
     // ──────────────────────────────────────────────
     function initSection13() {
-        const roleSections = document.querySelectorAll('.s13__role-sticky');
-        if (roleSections.length === 0) return;
+        const section = document.querySelector('.s13');
+        const roleCards = document.querySelectorAll('.s13__role-card');
+        if (!section || roleCards.length === 0) return;
 
-        roleSections.forEach(section => {
-            const videos = section.querySelectorAll('video');
-            const cards = section.querySelectorAll('.s13__reveal-card');
-            const mainOverlay = section.querySelector('.s13__overlay--main');
+        let sectionTop = 0;
+        let sectionHeight = 0;
+        let lerpProgress = 0;
+        let targetProgress = 0;
+        let inView = false;
+        const LERP_FACTOR = 0.08;
 
-            let sectionTop = 0;
-            let sectionHeight = 0;
-            let sectionInView = false;
-            let lerpProgress = 0;
-            let targetProgress = 0;
-            const LERP_FACTOR = 0.05; // Mais suave para evitar a sensação de "rápido demais"
+        const recalc = () => {
+            const rect = section.getBoundingClientRect();
+            sectionTop = rect.top + window.scrollY;
+            sectionHeight = section.offsetHeight;
+        };
 
-            const recalc = () => {
-                // Pega a posição absoluta no documento, não apenas relativa ao pai
-                const rect = section.getBoundingClientRect();
-                sectionTop = rect.top + window.scrollY;
-                sectionHeight = section.offsetHeight;
+        const updateElements = (progress) => {
+            roleCards.forEach((card, index) => {
+                const videos = card.querySelectorAll('video');
+                const reveal = card.querySelector('.s13__cards-reveal');
                 
-                // Inicializa o progresso no valor atual para evitar pulos ao carregar/redimensionar
-                const scrolled = window.scrollY - sectionTop;
-                const viewHeight = window.innerHeight;
-                const scrollable = sectionHeight - viewHeight;
-                lerpProgress = Math.max(0, Math.min(1, scrolled / (scrollable > 0 ? scrollable : 1)));
-            };
-
-            const animate = () => {
-                if (!sectionInView) return;
-
-                const scrolled = window.scrollY - sectionTop;
-                const viewHeight = window.innerHeight;
-                const scrollable = sectionHeight - viewHeight;
-                
-                targetProgress = Math.max(0, Math.min(1, scrolled / (scrollable > 0 ? scrollable : 1)));
-
-                // Lerp para suavizar o progresso
-                const diff = targetProgress - lerpProgress;
-                if (Math.abs(diff) > 0.0001) {
-                    lerpProgress += diff * LERP_FACTOR;
-                } else {
-                    lerpProgress = targetProgress;
-                }
-
-                // Controle dos Vídeos (Scrubbing Suave)
+                // 1. Video Scrubbing
                 videos.forEach(video => {
                     if (video.duration && !isNaN(video.duration)) {
-                        const safeDuration = video.duration - 0.05;
-                        const targetTime = lerpProgress * safeDuration;
-                        
+                        const targetTime = progress * (video.duration - 0.05);
                         if (Math.abs(video.currentTime - targetTime) > 0.01) {
                             video.currentTime = targetTime;
                         }
                     }
                 });
 
-                // Controle do Overlay
-                if (mainOverlay) {
-                    const overlayOpacity = 0.3 + (lerpProgress * 0.45);
-                    mainOverlay.style.opacity = overlayOpacity;
-                }
+                // 2. Reveal Cards (Staggered thresholds)
+                // General: 15% - 40%
+                // Bobo: 45% - 70%
+                // Centurião: 75% - 100%
+                const thresholds = [
+                    { start: 0.15, end: 0.40 }, // General
+                    { start: 0.45, end: 0.70 }, // Bobo
+                    { start: 0.75, end: 0.95 }  // Centurião
+                ];
 
-                // Revelação dos Cards
-                cards.forEach(card => {
-                    const threshold = parseFloat(card.dataset.reveal);
-                    if (lerpProgress >= threshold) {
-                        card.classList.add('active');
-                    } else {
-                        card.classList.remove('active');
+                const t = thresholds[index];
+                if (t) {
+                    let cardOpacity = 0;
+                    let cardY = 20;
+
+                    if (progress > t.start) {
+                        // Calcula progresso interno do threshold para suavizar a entrada
+                        const innerProg = Math.min(1, (progress - t.start) / (t.end - t.start));
+                        cardOpacity = innerProg;
+                        cardY = 20 * (1 - innerProg);
                     }
-                });
 
-                // Role Info em evidência
-                if (lerpProgress > 0.01 && lerpProgress < 0.99) {
-                    section.classList.add('in-view');
-                } else {
-                    section.classList.remove('in-view');
-                }
-
-                requestAnimationFrame(animate);
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    sectionInView = entry.isIntersecting;
-                    if (sectionInView) {
-                        recalc(); // Recalcula ao entrar para garantir precisão
-                        requestAnimationFrame(animate);
+                    if (reveal) {
+                        reveal.style.opacity = cardOpacity;
+                        reveal.style.transform = `translateY(${cardY}px)`;
                     }
-                });
-            }, { threshold: 0.01 });
+                }
+            });
+        };
 
-            observer.observe(section);
-            window.addEventListener('resize', recalc);
-            window.addEventListener('load', recalc);
-            recalc();
-        });
+        const animate = () => {
+            if (!inView) return;
+
+            const scrolled = window.scrollY - sectionTop;
+            const viewHeight = window.innerHeight;
+            const scrollable = sectionHeight - viewHeight;
+            
+            targetProgress = Math.max(0, Math.min(1, scrolled / (scrollable > 0 ? scrollable : 1)));
+
+            const diff = targetProgress - lerpProgress;
+            if (Math.abs(diff) > 0.0001) {
+                lerpProgress += diff * LERP_FACTOR;
+            } else {
+                lerpProgress = targetProgress;
+            }
+
+            updateElements(lerpProgress);
+            requestAnimationFrame(animate);
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                inView = entry.isIntersecting;
+                if (inView) {
+                    recalc();
+                    requestAnimationFrame(animate);
+                }
+            });
+        }, { threshold: 0 });
+
+        observer.observe(section);
+        window.addEventListener('resize', recalc);
+        window.addEventListener('load', recalc);
+        recalc();
     }
 
     initSection13();
@@ -1045,53 +923,80 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!section) return;
 
         const cards = Array.from(section.querySelectorAll('.s16__item-card'));
-        let lastProgress = -1;
+        const nextBtn = section.querySelector('.s16__nav--next');
+        const prevBtn = section.querySelector('.s16__nav--prev');
+        const dotsContainer = section.querySelector('.s16__dots');
         
+        let currentIndex = 0;
+        let isChestOpen = false;
+
+        // Criar dots
+        cards.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('s16__dot');
+            if (i === 0) dot.classList.add('is-active');
+            dot.addEventListener('click', () => goToCard(i));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = section.querySelectorAll('.s16__dot');
+
+        function updateCarousel() {
+            cards.forEach((card, i) => {
+                card.classList.remove('is-active', 'is-prev', 'is-next');
+                dots[i].classList.remove('is-active');
+
+                if (i === currentIndex) {
+                    card.classList.add('is-active');
+                    dots[i].classList.add('is-active');
+                } else if (i < currentIndex) {
+                    card.classList.add('is-prev');
+                } else {
+                    card.classList.add('is-next');
+                }
+            });
+        }
+
+        function goToCard(index) {
+            if (index < 0) index = cards.length - 1;
+            if (index >= cards.length) index = 0;
+            currentIndex = index;
+            updateCarousel();
+        }
+
+        nextBtn.addEventListener('click', () => goToCard(currentIndex + 1));
+        prevBtn.addEventListener('click', () => goToCard(currentIndex - 1));
+
+        // Swipe support
+        let touchStartX = 0;
+        section.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        section.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) goToCard(currentIndex + 1);
+            if (touchEndX - touchStartX > 50) goToCard(currentIndex - 1);
+        }, { passive: true });
+
         const handleScroll = () => {
             const rect = section.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            const totalScrollable = section.offsetHeight - viewportHeight;
             
-            let progress = -rect.top / totalScrollable;
-            progress = Math.min(Math.max(progress, 0), 1);
-
-            if (progress === lastProgress) return;
-            lastProgress = progress;
-
-            // 1. Sincronizar abertura do baú (0 a 15% do scroll)
-            const animProgress = Math.min(progress / 0.15, 1);
-            section.style.setProperty('--chest-open', animProgress);
-
-            // 2. Animação dos Cards (Saindo do Baú)
-            // Cards saem entre 15% e 80% do scroll total para garantir que o último complete o voo
-            cards.forEach((card, index) => {
-                card.style.setProperty('--card-index', index);
-                
-                // Espaçamento entre cards (0.15 a 0.90)
-                const cardStart = 0.15 + (index * (0.75 / cards.length));
-                
-                if (progress > cardStart) {
-                    card.classList.add('is-active');
-                } else {
-                    card.classList.remove('is-active');
-                }
-            });
+            // O baú abre quando o topo da seção chega perto do centro da tela
+            const triggerPoint = viewportHeight * 0.7;
+            const progress = Math.min(Math.max((triggerPoint - rect.top) / 400, 0), 1);
+            
+            section.style.setProperty('--chest-open', progress);
+            
+            if (progress > 0.5 && !isChestOpen) {
+                isChestOpen = true;
+                updateCarousel();
+            }
         };
 
-        // Intersection Observer para ligar/desligar o listener de scroll (Performance)
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    window.addEventListener('scroll', handleScroll);
-                    handleScroll();
-                } else {
-                    window.removeEventListener('scroll', handleScroll);
-                }
-            });
-        }, { threshold: 0.01 });
-
-        observer.observe(section);
-        window.addEventListener('resize', handleScroll);
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
     }
 
     initSection16();

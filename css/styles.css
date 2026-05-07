@@ -225,14 +225,13 @@ img { max-width: 100%; height: auto; display: block; }
 /* ========== HERO SCROLL SEQUENCE ========== */
 .hero {
     position: relative;
-    height: 500vh;
+    height: 100vh;
     border-bottom: 1px solid var(--border-color);
 }
 
 /* --- Sticky Viewport --- */
 .hero__viewport {
-    position: sticky;
-    top: 0;
+    position: relative;
     height: 100vh;
     width: 100%;
     overflow: hidden;
@@ -260,7 +259,7 @@ img { max-width: 100%; height: auto; display: block; }
 .hero__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, var(--bg-base) 0%, rgba(10,10,10,0.5) 20%, rgba(10,10,10,0.5) 100%);
+    background: linear-gradient(to right, #000 0%, #000 30%, rgba(0,0,0,0) 100%);
     transition: opacity 0.6s ease;
 }
 
@@ -294,48 +293,24 @@ img { max-width: 100%; height: auto; display: block; }
     pointer-events: auto;
 }
 
-/* Stage 1: Intro */
-.hero__stage--intro {
-    text-align: left;
-}
-
-/* Stage 2: Frase */
-.hero__stage--phrase {
-    text-align: left;
-    padding: 0 8vw;
-}
-
-.hero__phrase {
-    font-family: 'Playfair Display', serif;
-    font-size: 48px;
-    font-weight: 700;
-    line-height: 1.25;
-    color: #fff;
-    text-shadow: 0 0 40px var(--gold-glow);
-    max-width: 800px;
-    letter-spacing: -0.025em;
-}
-
-@media (max-width: 768px) {
-    .hero { height: auto; }
-    .hero__viewport { position: relative; height: auto; min-height: 100vh; }
-    .hero__phrase { font-size: 32px; }
-    .hero__stage--phrase { padding: 0 24px; }
-}
-
-@media (max-width: 480px) {
-    .hero__phrase { font-size: 24px; }
-}
-
-/* Stage 3: Full Content */
-.hero__stage--full {
+/* --- Stage Unified --- */
+.hero__stage--unified {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     text-align: left;
+    padding: 0 8vw;
+    z-index: 10;
 }
 
 .hero__stage-inner {
-    max-width: 1280px;
+    max-width: 100%; /* Ocupa 100% do container pai de 50% */
     width: 100%;
     margin: 0;
     padding: 0;
@@ -345,7 +320,11 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .hero__stage-inner { padding: 0 24px; }
+    .hero { height: auto; }
+    .hero__viewport { position: relative; height: auto; min-height: 100vh; padding: 80px 0; }
+    .hero__stage { position: relative; inset: auto; height: auto; padding: 0 24px; opacity: 1; transform: none; width: 100%; }
+    .hero__stage-inner { padding: 0; width: 100%; }
+    .hero__stage--unified { position: relative; width: 100%; padding: 0 24px; }
 }
 
 /* --- Hero Tag --- */
@@ -370,48 +349,52 @@ img { max-width: 100%; height: auto; display: block; }
     font-weight: 600;
 }
 
-/* --- Hero Title --- */
+/* --- Hero Title (Logo Style) --- */
 .hero__title {
     font-family: 'Playfair Display', serif;
-    font-size: 42px; /* H1 Rule */
-    line-height: 1.0;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
     color: #fff;
-    letter-spacing: -0.025em;
-    text-shadow: 0 0 30px var(--gold-glow);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 20px var(--gold-glow);
+    margin-bottom: 8px;
+    text-transform: uppercase;
 }
 
 @media (max-width: 768px) {
-    .hero__title { font-size: 56px; }
+    .hero__title { font-size: 24px; }
 }
 
-@media (max-width: 480px) {
-    .hero__title { font-size: 44px; }
+.hero__phrase-small {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 60px; /* Mais espaço antes da headline real */
+    max-width: 800px;
+    text-transform: uppercase;
 }
 
-/* --- Hero Headline --- */
+/* --- Hero Headline (Principal - 3 Linhas Fixas) --- */
 .hero__headline {
     font-family: 'Playfair Display', serif;
-    font-size: 42px; /* H1 Rule */
+    font-size: clamp(20px, 3vw, 60px);
     font-weight: 700;
-    line-height: 1.15;
+    line-height: 1.1;
     letter-spacing: -0.025em;
     color: #fff;
-    text-shadow: 0 0 30px var(--gold-glow);
-    margin-bottom: 24px;
+    text-shadow: 0 0 40px var(--gold-glow);
+    margin-bottom: 32px;
     max-width: 100%;
-    white-space: nowrap;
+    white-space: nowrap; /* Garante que os <br> sejam os únicos pontos de quebra */
 }
 
 @media (max-width: 768px) {
     .hero__headline { 
-        font-size: 44px; 
-        white-space: normal;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero__headline { 
-        font-size: 32px; 
+        font-size: 5.5vw; /* Escala para caber no 100% de largura do mobile */
     }
 }
 
@@ -428,25 +411,7 @@ img { max-width: 100%; height: auto; display: block; }
     .hero__desc { font-size: 1.25rem; }
 }
 
-/* --- Hero Phrase (Stage 2) --- */
-.hero__phrase {
-    font-family: var(--font-primary);
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 600;
-    line-height: 1.3;
-    color: #fff;
-    text-align: left;
-    max-width: 800px;
-    margin: 0;
-    /* Contraste solicitado: contorno preto nítido e sombra profunda */
-    text-shadow: 
-        -1.5px -1.5px 0 #000,  
-        1.5px -1.5px 0 #000,
-        -1.5px  1.5px 0 #000,
-        1.5px  1.5px 0 #000,
-        0 4px 20px rgba(0,0,0,1);
-    filter: drop-shadow(0 0 15px rgba(0,0,0,0.8));
-}
+/* Removido o estilo antigo da frase para usar .hero__phrase-small */
 
 /* --- Hero Actions --- */
 .hero__actions {
@@ -594,7 +559,8 @@ img { max-width: 100%; height: auto; display: block; }
     font-weight: 700;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    overflow: hidden;
+    white-space: nowrap; /* Linha única sempre */
+    overflow: visible; /* Permitir que o brilho do circuito apareça por fora */
     cursor: pointer;
     border: 1px solid transparent;
     transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
@@ -605,20 +571,69 @@ img { max-width: 100%; height: auto; display: block; }
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-    z-index: -1;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    background-position: -150% 0;
+    background-repeat: no-repeat;
+    transition: background-position 0.6s ease;
+    z-index: 1;
+    border-radius: inherit;
 }
 
 .btn--gold:hover::before {
-    transform: translateX(100%);
+    background-position: 150% 0;
 }
 
 .btn--gold:hover {
     background: var(--gold-hover);
     transform: scale(0.95);
     box-shadow: 0 10px 30px var(--gold-glow);
+}
+
+/* Efeito de Circuito para Botões */
+@keyframes spinCircuit {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.btn-circuit-container {
+    position: absolute;
+    inset: -2px; /* Expande para fora da borda */
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+    padding: 2px; /* Espessura do brilho externo */
+    border-radius: inherit;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.btn-circuit-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200vmax; /* Tamanho massivo para garantir que o raio cubra as laterais */
+    height: 200vmax;
+    aspect-ratio: 1;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 300deg,
+        #ffffff 360deg
+    );
+    animation: spinCircuit 4s linear infinite;
+    transform: translate(-50%, -50%);
+}
+
+/* Garantir que o conteúdo do botão fique acima do brilho */
+.btn--gold > span, 
+.btn--gold > iconify-icon,
+.btn--play > span,
+.btn--play > iconify-icon,
+.floating-cta > span {
+    position: relative;
+    z-index: 5;
 }
 
 /* Botão Play / Outline */
@@ -639,9 +654,10 @@ img { max-width: 100%; height: auto; display: block; }
     background: transparent;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    overflow: hidden;
+    overflow: visible; /* Permitir circuito externo */
     cursor: pointer;
     transition: all 0.3s var(--ease-out-expo);
+    white-space: nowrap; /* Linha única sempre */
 }
 
 /* Shine Sweep Effect */
@@ -649,14 +665,17 @@ img { max-width: 100%; height: auto; display: block; }
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(239, 20, 62, 0.12), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-    z-index: -1;
+    background: linear-gradient(90deg, transparent, rgba(239, 20, 62, 0.2), transparent);
+    background-size: 200% 100%;
+    background-position: -150% 0;
+    background-repeat: no-repeat;
+    transition: background-position 0.6s ease;
+    z-index: 1;
+    border-radius: inherit;
 }
 
 .btn--play:hover::before {
-    transform: translateX(100%);
+    background-position: 150% 0;
 }
 
 .btn--play:hover {
@@ -769,6 +788,11 @@ img { max-width: 100%; height: auto; display: block; }
 
 @keyframes marqueeScroll {
     to { transform: translateX(-50%); }
+}
+
+@keyframes spinCircuit {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Scroll Reveal */
@@ -4155,8 +4179,18 @@ img { max-width: 100%; height: auto; display: block; }
 .s11__ritual-list {
     background: rgba(0,0,0,0.25);
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 10px;
-    padding: 16px 20px;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+/* Estado Expandido (Mobile/Tablet) */
+.s13__role-card.is-expanded .s13__cards-reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.s13__role-card.is-expanded {
+    height: 90vh; /* Aumenta um pouco para mostrar o conteúdo */
 }
 
 .s11__ritual-label {
@@ -5168,320 +5202,248 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* =============================================
-   SEÇÃO 13 – A HIERARQUIA VIVA
-   Os três cargos da coorte
+   SEÇÃO 13 – A HIERARQUIA VIVA (SCROLL-STICKY GRID)
    ============================================= */
-/* =============================================
-   SEÇÃO 13 – A HIERARQUIA VIVA (STICKY REVEAL)
-   ============================================= */
-/* Utility Design System Classes */
-.ds-section-title {
-    font-size: 36px;
-    line-height: 1.1;
-    letter-spacing: -0.025em;
-    font-weight: 800;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: #fff;
-}
-.ds-section-title::before {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 2px;
-    background: var(--primary);
-}
-.ds-section-desc {
-    font-size: 18px;
-    color: var(--text-muted);
-    margin-bottom: 60px;
-    max-width: 800px;
-    line-height: 1.625;
-}
-@media (max-width: 768px) {
-    .ds-section-title { font-size: 26px; }
-    .ds-section-desc { font-size: 16px; }
-}
-
 .s13 {
     position: relative;
     background: #000;
+    height: 400vh; /* Altura para o scroll animado */
 }
 
-/* Header fixo no topo da seção ou antes dos sticky blocks? 
-   Vamos fazer um header inicial e depois os blocos sticky. */
-.hero-v2-tag {
-    display: inline-flex;
+.s13__sticky-container {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 32px;
 }
-.hero-v2-tag-line { width: 40px; height: 1px; background: #EF143E; }
-.hero-v2-tag-text { font-size: 12px; letter-spacing: 0.35em; text-transform: uppercase; color: #EF143E; font-weight: 600; }
 
-.hero-v2-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 8vw, 65px);
-    line-height: 1.1;
-    color: #fff;
-    letter-spacing: -0.025em;
-    margin-bottom: 32px;
-    text-shadow: 0 0 30px rgba(239, 20, 62, 0.4);
-    white-space: nowrap;
-}
-.hero-v2-title span {
-    display: inline-block;
-}
-.hero-v2-title-serif {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 0.8em;
-    font-weight: 400;
-    color: #EF143E;
-    text-transform: none;
-    letter-spacing: normal;
+.s13__viewport {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .s13__intro-header {
-    min-height: 50vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     text-align: center;
-    padding: 100px 24px;
-    background: linear-gradient(to bottom, var(--bg-base), #000);
+    padding: 0 24px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* Sticky Role Block */
-.s13__role-sticky {
+.s13__roles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.s13__role-card {
     position: relative;
-    height: 300vh; /* Espaço para o scroll scrub */
+    height: 65vh; /* Ajustado para caber o header no viewport */
+    min-height: 500px;
+    background: #000;
+    overflow: hidden;
+    transition: transform 0.6s var(--ease-out-expo);
 }
 
 .s13__visual-wrapper {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    position: absolute;
+    inset: 0;
     z-index: 1;
 }
 
-/* Video Container */
 .s13__video-container {
     width: 100%;
     height: 100%;
-    position: relative;
+    display: flex;
 }
 
 .s13__video-container video {
-    width: 100%;
+    flex: 1;
+    width: 50%; /* Garante que ocupem metade cada */
     height: 100%;
     object-fit: cover;
-    display: block;
-    image-rendering: -webkit-optimize-contrast;
-    backface-visibility: hidden;
+    min-width: 0;
 }
 
-.s13__video-container--general {
-    background: #000;
-}
-.s13__video-container--general video {
-    object-fit: cover;
-    object-position: center top;
+.s13__video-container video:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Dual Video Layout */
-.s13__video-container--dual {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-.s13__video-container--dual video:first-child {
-    border-right: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Overlays */
+/* Overlay mais forte para contraste */
 .s13__overlay {
     position: absolute;
     inset: 0;
-    z-index: 2;
     pointer-events: none;
-}
-
-.s13__overlay--top {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 40%);
-}
-
-.s13__overlay--bottom {
-    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.4) 30%, transparent 100%);
 }
 
 .s13__overlay--main {
-    background: #000;
-    opacity: 0.3; /* Valor base */
-    transition: opacity 0.3s ease;
+    background: linear-gradient(180deg, 
+        rgba(0,0,0,1) 0%, 
+        rgba(0,0,0,0.7) 15%, 
+        rgba(0,0,0,0) 50%, 
+        rgba(0,0,0,0.9) 100%
+    );
+    opacity: 1;
+    z-index: 5; /* Acima dos vídeos e do ::after */
 }
 
-/* Content Layout */
-.s13__content-container {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 10;
+/* Overlay extra para escurecer o fundo geral e destacar o texto branco */
+.s13__video-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
     pointer-events: none;
+}
+
+.s13__overlay--bottom {
+    background: linear-gradient(to top, #000 0%, transparent 40%);
+    z-index: 6;
+}
+
+.s13__content-wrapper {
+    position: relative;
+    z-index: 10;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 60px 80px;
+    padding: 48px;
+    pointer-events: none;
 }
 
-@media (max-width: 768px) {
-    .s13__content-container { padding: 40px 24px; }
-}
-
-/* Role Top Info */
 .s13__role-info {
-    max-width: 600px;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.8s var(--ease-out-expo);
-    pointer-events: auto;
-}
-.s13__role-sticky.in-view .s13__role-info {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
+    transition: all 0.5s ease;
 }
 
 .s13__role-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-.s13__role-tag-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(239, 20, 62, 0.2);
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 20px;
-}
-.s13__role-sticky[data-role="bobo"] .s13__role-tag-icon {
-    background: rgba(239, 20, 62, 0.2);
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-.s13__role-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 48px;
-    color: #fff;
-    margin-bottom: 12px;
-}
-.s13__role-desc {
-    font-size: 18px;
-    color: var(--text-muted);
-    line-height: 1.5;
-    font-style: italic;
-}
-
-/* Cards Reveal Area */
-.s13__cards-reveal {
-    display: flex;
-    gap: 24px;
-    width: 100%;
-    overflow: visible;
-    pointer-events: auto;
-}
-
-.s13__reveal-card {
-    flex: 1;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.6s var(--ease-out-expo);
-}
-
-.s13__reveal-card.active {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Estilização interna dos cards de revelação */
-.s13__card-inner {
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 32px;
-    height: 100%;
-}
-
-.s13__card-header {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
-    color: var(--gold);
 }
-.s13__role-sticky[data-role="bobo"] .s13__card-header { color: var(--primary); }
 
-.s13__card-header h4 {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+.s13__role-tag-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.s13__role-card[data-role="general"] .s13__role-tag-icon { color: var(--gold); border-color: var(--gold); }
+.s13__role-card[data-role="bobo"] .s13__role-tag-icon { color: var(--primary); border-color: var(--primary); }
+
+.s13__role-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.s13__role-desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    max-width: 280px;
+    line-height: 1.4;
+}
+
+.s13__cards-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform;
+}
+
+.s13__reveal-card {
+    width: 100%;
+}
+
+.s13__card-inner {
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.s13__card-inner h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
 }
 
 .s13__card-list {
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
+
 .s13__card-list li {
     display: flex;
-    gap: 12px;
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.5;
-    margin-bottom: 12px;
+    gap: 10px;
+    font-size: 13px;
+    color: #fff;
+    line-height: 1.4;
 }
-.s13__card-list li iconify-icon {
+
+.s13__card-list iconify-icon {
+    color: var(--gold);
     flex-shrink: 0;
     margin-top: 2px;
-    color: var(--gold);
 }
-.s13__role-sticky[data-role="bobo"] .s13__card-list li iconify-icon { color: var(--primary); }
 
-/* Responsive Adjustments */
+.s13__role-card[data-role="bobo"] .s13__card-list iconify-icon { color: var(--primary); }
+
+/* Responsividade */
 @media (max-width: 1024px) {
-    .s13__cards-reveal {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+    .s13__roles-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
     }
-    .s13__role-sticky { height: 400vh; }
+    
+    .s13__role-card {
+        height: 60vh;
+        min-height: 500px;
+    }
+    
+    .s13__role-card.is-expanded {
+        height: 80vh;
+    }
+
+    .s13__role-title {
+        font-size: 32px;
+    }
 }
 
 @media (max-width: 768px) {
-    .hero-v2-title { white-space: normal; }
-    .s13__cards-reveal {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    .s13__content-container {
-        justify-content: flex-start;
-        overflow-y: auto;
-    }
-    .s13__role-info { margin-bottom: 40px; }
-    .s13__role-title { font-size: 32px; }
-    .s13__role-sticky { height: auto; position: relative; }
-    .s13__role-viewport { position: relative; height: auto; }
+    .s13 { padding: 60px 0; }
+    .s13__intro-header { padding-bottom: 40px; }
+    .s13__content-wrapper { padding: 32px; }
+    .s13__role-card { height: 70vh; }
+    .s13__role-card.is-expanded { height: 90vh; }
 }
 
 /* ========== SEÇÃO 14: A DOUTRINA (HORIZONTAL SCROLL) ========== */
@@ -5774,569 +5736,6 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* SEÇÃO 15: MANUAL OPERACIONAL (LIVRO 3D) */
-.s15 {
-    position: relative;
-    height: 1200vh;
-    margin-top: 250px; /* Aumentado gap entre S14 e S15 */
-    background: 
-        radial-gradient(circle at center, rgba(239, 20, 62, 0.08) 0%, transparent 70%),
-        #050505;
-    background-image: 
-        radial-gradient(circle at center, rgba(239, 20, 62, 0.08) 0%, transparent 70%),
-        linear-gradient(rgba(239, 20, 62, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(239, 20, 62, 0.03) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px;
-}
-
-.s15__sticky {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    overflow: hidden;
-    padding: 8vh 48px; /* Padding proporcional */
-}
-
-.s15__header {
-    text-align: center;
-    margin-bottom: 10vh;
-    position: relative;
-    z-index: 5;
-}
-
-.s15__overline {
-    font-size: 12px;
-    font-weight: 800;
-    color: #EF143E;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 16px;
-}
-
-.s15__title {
-    font-size: 42px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-}
-
-/* Palco 3D */
-.s15__book-scene {
-    width: 1000px; /* Aumentado para acomodar o livro maior */
-    height: 550px;
-    perspective: 2500px; /* Aumentado o campo de visão */
-    position: relative;
-    z-index: 10;
-    margin: 5vh 0 10vh; /* Gap proporcional */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.s15__book {
-    width: 500px; /* Aumentado de 400px para 500px por página */
-    height: 450px; /* Reduzido para caber tudo com gaps */
-    position: absolute; /* Mudado de relative para absolute */
-    left: 50%; /* Posiciona a espinha no centro exato */
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    /* O transform será controlado via JS, mas o estado base é rotateX(10deg) */
-    transform: rotateX(10deg);
-}
-
-.s15__page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform-origin: left center;
-    transform-style: preserve-3d;
-    transition: transform 0.1s linear;
-}
-
-.s15__face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    padding: 40px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-}
-
-.s15__face--front {
-    z-index: 2;
-    transform: rotateY(0deg);
-}
-
-.s15__face--back {
-    z-index: 1;
-    transform: rotateY(180deg);
-}
-
-/* Estilo Capa */
-.s15__face--cover {
-    background: #1a1a1a;
-    border: 2px solid #EF143E;
-    border-radius: 4px 8px 8px 4px;
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.5), 10px 10px 30px rgba(0,0,0,0.5);
-    color: #EF143E;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.s15__cover-eagle {
-    font-size: 100px;
-    margin-bottom: 32px;
-    color: #EF143E;
-    filter: drop-shadow(0 0 15px rgba(213,145,15,0.4));
-}
-
-.s15__cover-title {
-    font-size: 24px;
-    font-weight: 900;
-    line-height: 1.1;
-    letter-spacing: 0.1em;
-    margin-bottom: 20px;
-}
-
-.s15__cover-badge {
-    background: #EF143E;
-    color: #000;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 0.2em;
-}
-
-/* Estilo Papel */
-.s15__face--paper {
-    background: #fdfdfd;
-    background-image: radial-gradient(#e5e5f7 0.5px, transparent 0.5px);
-    background-size: 10px 10px;
-    border: 1px solid #ddd;
-    border-left: 5px solid #EF143E;
-    border-radius: 0 4px 4px 0;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-    color: #1a1a1a;
-}
-
-.s15__face--dark {
-    background: #0a0a0a;
-    background-image: radial-gradient(rgba(213,145,15,0.05) 0.5px, transparent 0.5px);
-    background-size: 15px 15px;
-    border: 1px solid #333;
-    border-left: 5px solid #EF143E;
-    border-radius: 0 4px 4px 0;
-    color: #ffffff;
-}
-
-.s15__face--dark .s15__page-title {
-    color: #ffffff;
-}
-
-.s15__face--dark .s15__page-text {
-    color: #ccc;
-}
-
-.s15__face--dark .s15__page-title::before {
-    background: #EF143E;
-}
-.s15__back-cover-eagle {
-    font-size: 80px;
-    color: #EF143E;
-    margin-bottom: 32px;
-    opacity: 0.8;
-}
-
-.s15__page-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 28px; /* Aumentado de 20px */
-    font-weight: 900;
-    color: #1a1a1a;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.s15__page-title::before {
-    content: '';
-    width: 6px;
-    height: 32px;
-    background: #EF143E;
-    display: inline-block;
-}
-
-.s15__page-subtitle {
-    font-size: 14px; /* Aumentado de 11px */
-    font-weight: 700;
-    color: #EF143E;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    margin-top: -15px;
-    margin-bottom: 32px;
-    display: block;
-}
-
-.s15__page-text {
-    font-size: 18px; /* Aumentado de 14px */
-}
-
-.s15__ritual-list, .s15__rules {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.s15__ritual-item, .s15__rules li {
-    font-size: 15px; /* Aumentado de 11px */
-    line-height: 1.5;
-    list-style: none;
-}
-
-.s15__rules li strong {
-    color: #EF143E;
-    margin-right: 5px;
-}
-
-.s15__hierarchy-list {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.s15__hierarchy-item {
-    font-size: 15px; /* Aumentado de 11px */
-    padding: 12px;
-    background: rgba(239, 20, 62, 0.05);
-    border-left: 4px solid #EF143E;
-}
-
-.s15__face--dark .s15__hierarchy-item {
-    background: rgba(239, 20, 62, 0.1);
-    border-left-color: #EF143E;
-}
-
-.s15__divider {
-    height: 1px;
-    background: linear-gradient(to right, rgba(155,27,27,0.2), transparent);
-    margin: 24px 0;
-}
-
-.s15__intro-quote {
-    font-family: 'Inter', sans-serif;
-    font-style: italic;
-    font-size: 17px; /* Aumentado de 13px */
-    color: #555;
-    padding: 24px;
-    background: rgba(155,27,27,0.03);
-    border-radius: 4px;
-    line-height: 1.6;
-}
-
-/* Conteúdo Semana - Estilo "Registry" */
-.s15__semana-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.s15__semana-item {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    padding-bottom: 12px;
-}
-
-.s15__day {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 900;
-    color: #EF143E;
-    font-size: 16px; /* Aumentado de 13px */
-}
-
-.s15__event {
-    font-weight: 800;
-    text-transform: uppercase;
-    font-size: 15px; /* Aumentado de 12px */
-    color: #1a1a1a;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.s15__badge {
-    font-size: 10px; /* Aumentado de 8px */
-    background: #EF143E;
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 2px;
-    letter-spacing: 0.1em;
-    font-weight: 900;
-}
-
-.s15__semana-item p {
-    grid-column: 2;
-    font-size: 14px; /* Aumentado de 11px */
-    color: #666;
-    margin-top: 4px;
-}
-
-/* Rituais */
-.s15__ritual-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.s15__ritual-item {
-    background: #fff;
-    border: 1px solid rgba(155,27,27,0.1);
-    padding: 16px;
-    border-radius: 4px;
-    font-size: 16px; /* Aumentado de 12px */
-    transition: all 0.3s ease;
-}
-
-.s15__ritual-item:hover {
-    border-color: #EF143E;
-    transform: translateX(5px);
-}
-
-.s15__ritual-item strong {
-    color: #EF143E;
-    font-weight: 900;
-    display: block;
-    margin-bottom: 6px;
-    font-size: 13px; /* Aumentado de 10px */
-    letter-spacing: 0.1em;
-}
-
-/* Regras */
-.s15__rules-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.s15__rules-list li {
-    font-size: 15px; /* Aumentado de 11px */
-    font-weight: 600;
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px;
-    background: rgba(0,0,0,0.02);
-    border-radius: 4px;
-}
-
-.s15__rules-list li span {
-    background: #EF143E;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    font-size: 13px; /* Aumentado de 10px */
-    font-weight: 900;
-}
-
-.s15__rules-list li strong {
-    color: #EF143E;
-    font-size: 13px; /* Aumentado de 10px */
-    letter-spacing: 0.05em;
-}
-
-/* Canais */
-.s15__channels-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.s15__channel {
-    background: #fff;
-    border: 1px solid #eee;
-    padding: 16px;
-    border-radius: 4px;
-    text-align: center;
-}
-
-.s15__channel iconify-icon {
-    font-size: 32px; /* Aumentado de 24px */
-    color: #EF143E;
-    margin-bottom: 12px;
-}
-
-.s15__channel strong {
-    font-size: 14px; /* Aumentado de 10px */
-    color: #1a1a1a;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.s15__channel p {
-    font-size: 12px; /* Aumentado de 9px */
-    color: #777;
-    line-height: 1.4;
-}
-
-.s15__chronos-note {
-    background: #1a1a1a;
-    color: #EF143E;
-    padding: 16px;
-    border-radius: 4px;
-    font-size: 11px;
-    margin-top: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.s15__chronos-note::after {
-    content: 'TOP SECRET';
-    position: absolute;
-    right: -10px;
-    bottom: -5px;
-    font-size: 20px;
-    font-weight: 900;
-    opacity: 0.05;
-    transform: rotate(-15deg);
-}
-
-/* Back Cover */
-.s15__face--back-cover {
-    border-left: 2px solid #EF143E;
-    border-right: none;
-    border-radius: 8px 4px 4px 8px;
-    background: #1a1a1a !important; /* Força couro na contra-capa */
-    color: #EF143E;
-}
-
-.s15__back-cover-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.s15__back-cover-eagle {
-    font-size: 100px;
-    filter: drop-shadow(0 0 20px rgba(213,145,15,0.3));
-}
-
-/* Responsividade Mobile */
-@media (max-width: 768px) {
-    .s15 {
-        height: auto;
-        padding: 96px 0;
-    }
-    
-    .s15__sticky {
-        position: relative;
-        height: auto;
-        padding: 0 24px;
-        overflow: visible;
-    }
-
-    .s15__title {
-        font-size: 32px;
-    }
-
-    .s15__book-scene {
-        width: 100%;
-        height: auto;
-        perspective: none;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-        margin-top: 120px;
-    }
-
-    .s15__book {
-        position: relative;
-        transform: none !important;
-        left: 0;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-    }
-
-    .s15__page {
-        position: relative;
-        left: 0;
-        width: 100%;
-        height: auto;
-        transform: none !important;
-        z-index: 1 !important;
-    }
-
-    .s15__face {
-        position: relative;
-        transform: none !important;
-        height: auto;
-        padding: 40px 24px;
-        backface-visibility: visible;
-        border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .s15__face--paper {
-        border-left: 5px solid #EF143E;
-    }
-
-    .s15__face--back {
-        display: flex; 
-        margin-top: 16px;
-    }
-}
-
-
-/* ==========================================================================
-   S15 CIRCUIT EFFECT (Ported from S6 - Full Edge)
-   ========================================================================== */
-.s15__circuit-container {
-    position: absolute;
-    inset: 0; /* Colado nas extremidades totais */
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-    padding: 2px; /* Espessura do raio */
-    
-    /* Mágica da Máscara: Revela apenas a borda de 2px nas extremidades */
-    background: rgba(239, 20, 62, 0.2);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-}
-
-.s15__circuit-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 300vmax;
-    height: 300vmax;
-    transform: translate(-50%, -50%);
-    background: conic-gradient(from 0deg, transparent 0 340deg, var(--gold) 350deg, #fff 360deg);
-    animation: spinCircuit 3s linear infinite;
-    opacity: 0.8;
-}
 
 /* ==========================================================================
    SEÇÃO 16: O ARSENAL
@@ -6349,19 +5748,18 @@ img { max-width: 100%; height: auto; display: block; }
         linear-gradient(rgba(239, 20, 62, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(239, 20, 62, 0.03) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
-    padding-top: 250px; /* Gap generoso e colorido */
+    padding: 100px 0;
     margin-top: 0;
     overflow: visible;
-    min-height: 800vh;
+    min-height: auto;
 }
 
 .s16__container {
     max-width: 1440px;
     margin: 0 auto;
     padding: 0 48px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
+    position: relative;
+    min-height: auto;
     display: flex;
     align-items: center;
 }
@@ -6567,9 +5965,100 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .s16__trigger {
-    height: 100vh; /* Um card por viewport de scroll */
+    display: none;
+}
+
+/* Layout do Carrossel */
+.s16__right {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.s16__carousel-wrapper {
+    position: relative;
     width: 100%;
+    max-width: 650px;
+    height: 520px; /* Bem rente à altura do card de 480px + margem */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.s16__cards-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     pointer-events: none;
+    z-index: 100;
+}
+
+/* Botões Laterais Absolutos */
+.s16__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(239, 20, 62, 0.3);
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.s16__nav--prev { left: 0; }
+.s16__nav--next { right: 0; }
+
+.s16__nav iconify-icon {
+    font-size: 24px;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.s16__nav:hover {
+    background: rgba(239, 20, 62, 0.2);
+    border-color: #EF143E;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.s16__nav:hover iconify-icon {
+    color: #EF143E;
+}
+
+/* Bullets Abaixo do Card */
+.s16__dots {
+    position: absolute;
+    bottom: -10px; /* Levemente fora para não sobrepor o card */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 1000;
+}
+
+.s16__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.s16__dot.is-active {
+    width: 32px;
+    background: #EF143E;
+    box-shadow: 0 0 15px rgba(239, 20, 62, 0.5);
 }
 
 /* Container de Cards (Dentro da esquerda) */
@@ -6583,27 +6072,25 @@ img { max-width: 100%; height: auto; display: block; }
 .s16__item-card {
     position: absolute;
     top: 50%;
-    left: 100%; /* Começa na borda da esquerda, pronto para ir para a direita */
+    left: 50%;
     background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
     border: 1px solid rgba(239, 20, 62, 0.3);
     border-radius: 16px;
     padding: 32px;
     width: 420px;
-    height: 580px; /* Altura reduzida para melhor encaixe vertical */
+    height: 580px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-    margin-top: 0; /* Removido para usar centralização por transform */
     
-    /* Estado Inicial: Físicamente dentro do baú 3D */
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
-    /* Começa DENTRO do baú (negativo em relação à sua posição absoluta) */
-    transform: translate3d(-350px, 100px, -500px) scale(0) rotateX(90deg);
+    /* Começa vindo do baú (esquerda) */
+    transform: translate3d(-150%, -30%, -500px) scale(0) rotateX(90deg);
     transition: 
-        transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), 
+        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), 
         opacity 0.4s ease,
         visibility 0.4s step-end;
 }
@@ -6612,13 +6099,22 @@ img { max-width: 100%; height: auto; display: block; }
     opacity: 1;
     visibility: visible;
     pointer-events: all;
-    /* Posição Final: Ajustado para o centro óptico (levemente acima do centro real) */
-    transform: translate3d(100px, calc(-58% + (var(--card-index) * 10px)), 0) scale(1) rotate(calc(var(--card-index) * -0.8deg));
-    z-index: calc(200 + var(--card-index, 0)) !important;
+    transform: translate3d(-50%, -50%, 0) scale(1) rotate(0deg);
+    z-index: 500 !important;
     transition: 
-        transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), 
+        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), 
         opacity 0.4s ease,
         visibility 0.4s step-start;
+}
+
+.s16__item-card.is-prev {
+    opacity: 0;
+    transform: translate3d(-20%, -40%, -100px) scale(0.9) rotate(5deg);
+}
+
+.s16__item-card.is-next {
+    opacity: 0;
+    transform: translate3d(-80%, -60%, -100px) scale(0.9) rotate(-5deg);
 }
 
 .s16__item-header {
@@ -6658,18 +6154,13 @@ img { max-width: 100%; height: auto; display: block; }
 
 @media (max-width: 1024px) {
     .s16 { min-height: auto; }
-    .s16__layout { grid-template-columns: 1fr; gap: 40px; }
-    .s16__left { height: auto; position: relative; top: 0; padding-top: 80px; }
-    .s16__right { padding: 40px 0; gap: 32px; }
-    .s16__item-card { 
-        position: relative; 
-        top: 0; 
-        margin-top: 0 !important; 
-        opacity: 1; 
-        transform: none; 
-        min-height: auto;
-        padding: 40px;
-    }
+    .s16__layout { flex-direction: column; gap: 40px; }
+    .s16__left { width: 100%; height: auto; position: relative; top: 0; padding-top: 40px; }
+    .s16__right { width: 100%; padding: 40px 0; }
+    .s16__carousel-wrapper { max-width: 100%; height: 650px; }
+    .s16__item-card { width: 90%; max-width: 400px; }
+    .s16__nav--prev { left: 5px; }
+    .s16__nav--next { right: 5px; }
 }
 /* ==========================================================================
    SEÇÃO 17: A OFERTA
