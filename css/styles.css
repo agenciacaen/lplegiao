@@ -116,6 +116,12 @@ img { max-width: 100%; height: auto; display: block; }
     z-index: 10;
 }
 
+.ds-container {
+    width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 96px 24px;
@@ -3048,52 +3054,104 @@ img { max-width: 100%; height: auto; display: block; }
 
 @media (max-width: 768px) {
     .s8 {
-        height: auto;
-        padding: 96px 0;
+        height: 850vh;
+        padding: 0;
+        overflow: visible; /* Garante que o sticky funcione */
     }
     
     .s8__sticky-viewport {
-        position: relative;
-        height: auto;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
     
     .s8__container {
-        padding: 0 24px;
+        padding: 0 16px;
+        transform: scale(0.75);
+        transform-origin: center center;
     }
     
     .s8__dashboard {
-        padding: 32px 20px;
+        padding: 24px 16px;
     }
     
     .s8__dashboard-top {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+    
+    .s8__dashboard-title {
+        font-size: 16px;
+    }
+
+    .s8__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .s8__item {
+        padding: 16px;
+    }
+
+    .s8__item-icon-box {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+    .s8__item-name {
+        font-size: 10px;
+    }
+
+    .s8__item-value {
+        font-size: 12px;
     }
     
     .s8__live {
-        position: relative;
-        right: auto;
-        top: auto;
+        position: absolute;
+        right: 0;
+        top: -10px;
+        padding: 4px 10px;
     }
     
     .s8__merged {
-        position: relative;
-        opacity: 1;
-        pointer-events: auto;
-        margin-top: 48px;
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .s8__merged-card {
-        padding: 40px 24px;
+        padding: 32px 20px;
+        width: 100%;
+        max-width: 100%;
     }
     
     .s8__merged-counter-value {
-        font-size: 56px;
+        font-size: 48px;
     }
 
     .s8__merged-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .s8__merged-list-item {
+        padding: 8px 10px;
+        font-size: 10px;
     }
 }
 
@@ -5368,13 +5426,22 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (max-width: 768px) {
-    .s14 { padding: 80px 0; }
-    .s14__container { padding: 0 24px; }
-    .s14__carousel-wrapper { padding: 0 40px; }
-    .s14__item-card { padding: 32px; }
-    .s14__nav { width: 40px; height: 40px; }
+    .s14 { padding: 60px 0; }
+    .s14__container { padding: 0 20px; }
+    .s14__carousel-wrapper { padding: 0 35px; }
+    .s14__item-card { padding: 24px; }
+    .s14__item-num { font-size: 32px; }
+    .s14__item-header { margin-bottom: 20px; }
+    .s14__item-header iconify-icon { font-size: 24px; }
+    .s14__item-title { font-size: 22px; margin-bottom: 16px; }
+    .s14__item-list { margin-bottom: 24px; gap: 8px; }
+    .s14__item-list li { font-size: 14px; }
+    .s14__item-footer { padding-top: 16px; font-size: 13px; }
+    
+    .s14__nav { width: 36px; height: 36px; }
     .s14__nav--prev { left: -5px; }
     .s14__nav--next { right: -5px; }
+    .s14__nav iconify-icon { font-size: 18px; }
 }
 
 /* SEÇÃO 15: MANUAL OPERACIONAL (LIVRO 3D) */
@@ -5804,6 +5871,23 @@ img { max-width: 100%; height: auto; display: block; }
     .s16__nav--prev { left: 5px; }
     .s16__nav--next { right: 5px; }
 }
+
+@media (max-width: 768px) {
+    .s16 { padding: 60px 0; }
+    .s16__right { padding: 20px 0; }
+    .s16__carousel-wrapper { height: 500px; }
+    .s16__item-card { width: 85%; padding: 24px; }
+    .s16__item-num { font-size: 32px; }
+    .s16__item-header { margin-bottom: 20px; }
+    .s16__item-header iconify-icon { font-size: 24px; }
+    .s16__item-title { font-size: 20px; margin-bottom: 12px; }
+    .s16__item-text { font-size: 14px; line-height: 1.5; }
+    
+    .s16__nav { width: 36px; height: 36px; }
+    .s16__nav--prev { left: 0px; }
+    .s16__nav--next { right: 0px; }
+    .s16__nav iconify-icon { font-size: 18px; }
+}
 /* ==========================================================================
    SEÇÃO 17: A OFERTA
    ========================================================================== */
@@ -6049,11 +6133,22 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Responsividade pricing hero */
 @media (max-width: 768px) {
-    .s17__pricing-card--hero { padding: 64px 24px; }
-    .s17__pricing-includes { grid-template-columns: 1fr; max-width: 100%; }
-    .s17__cta--hero { padding: 24px 48px !important; font-size: 16px !important; }
-    .s17__trust-row { gap: 16px; }
-    .s17__savings { font-size: 12px; padding: 8px 16px; }
+    .s17__pricing-card--hero { padding: 40px 15px; width: 100%; margin-left: 0; margin-right: 0; }
+    .s17__product-name { font-size: 22px; margin-bottom: 20px; }
+    .s17__pricing-includes { grid-template-columns: 1fr; max-width: 100%; padding: 15px; margin-bottom: 24px; }
+    .s17__cta--hero { 
+        padding: 18px 12px !important; 
+        font-size: 13px !important; 
+        width: 100%;
+        letter-spacing: 0 !important;
+        white-space: nowrap !important;
+        line-height: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .s17__trust-row { gap: 10px; }
+    .s17__savings { font-size: 11px; padding: 6px 12px; margin-top: 10px; }
 }
 
 .s17__badge-oferta {
@@ -6520,31 +6615,34 @@ img { max-width: 100%; height: auto; display: block; }
     line-height: 1.6;
 }
 
-@media (max-width: 900px) {
+
+
+@media (max-width: 1024px) {
+    .s18__container {
+        padding: 0 24px;
+    }
     .s18__timeline {
         grid-template-columns: 1fr;
+        gap: 48px;
     }
-}
-
-/* Responsividade S18 */
-@media (max-width: 1024px) {
-    .s18__timeline-line { left: 40px; }
-    .s18__milestone-point { left: 40px; }
     .s18__milestone, .s18__milestone:nth-child(even) {
         justify-content: flex-start;
-        padding-left: 80px;
+        padding-left: 0;
         padding-right: 0;
     }
-    .s18__card { width: 100%; max-width: 100%; margin: 0; }
+    .s18__card { 
+        width: 100%; 
+        max-width: 100%; 
+        margin: 0; 
+    }
 }
 
 @media (max-width: 768px) {
-    .s18 { height: auto; padding: 96px 0; }
-    .s18__sticky { position: relative; height: auto; }
-    .s18__timeline { transform: none !important; flex-direction: column; gap: 48px; }
-    .s18__title { font-size: 48px; }
-    .s18__desc { font-size: 18px; }
-    .s18__card { padding: 32px; }
+    .s18 { height: auto; padding: 80px 0; }
+    .s18__timeline { display: flex; flex-direction: column; gap: 40px; }
+    .s18__title { font-size: 36px; }
+    .s18__desc { font-size: 16px; }
+    .s18__card { padding: 24px; }
 }
 
 /* ==========================================================================
@@ -6885,7 +6983,7 @@ img { max-width: 100%; height: auto; display: block; }
     }
 
     .s17__installments {
-        font-size: 56px !important;
+        font-size: 32px !important;
     }
     .s17__price-value {
         font-size: 28px !important;

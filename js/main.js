@@ -348,9 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const s8MergedListItems = document.querySelectorAll('.s8__merged-list-item');
     const s8Scene = document.getElementById('s8-scene');
 
-    const isDesktopS8 = () => window.innerWidth > 768;
-
-    if (s8Section && s8Dashboard && s8Merged && s8Items.length > 0 && isDesktopS8()) {
+    if (s8Section && s8Dashboard && s8Merged && s8Items.length > 0) {
         
         const TOTAL_MH = 340;
         const CARD_COUNT = s8Items.length; // 6 cards
@@ -389,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const handleS8Scroll = () => {
-            if (!isDesktopS8()) return;
+            // Animação habilitada para desktop e mobile
 
             const rect = s8Section.getBoundingClientRect();
             const viewHeight = window.innerHeight;
@@ -410,9 +408,10 @@ document.addEventListener('DOMContentLoaded', () => {
              * 0.70 – 1.00  → Fase 3: Card unificado + barra de progresso
              */
 
-            const PHASE1_END = 0.15;
-            const PHASE2_END = 0.70;
-            const CARD_WINDOW = (PHASE2_END - PHASE1_END) / CARD_COUNT; // ~0.092 per card
+            const PHASE1_END = 0.10;
+            const PHASE2_END = 0.65;
+            const PHASE3_END = 0.90; // Buffer final de 10%
+            const CARD_WINDOW = (PHASE2_END - PHASE1_END) / CARD_COUNT;
 
             // ── FASE 1: Cards estáticos (0% → 15%) ──
             if (progress < PHASE1_END) {
@@ -528,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // ── FASE 3: Card Unificado + Barra de Progresso (70% → 100%) ──
             else {
-                const fillProgress = (progress - PHASE2_END) / (1 - PHASE2_END); // 0 → 1
+                const fillProgress = Math.min((progress - PHASE2_END) / (PHASE3_END - PHASE2_END), 1); // 0 → 1 finaliza em PHASE3_END
                 
                 // Esconder todos os cards individuais
                 s8Items.forEach(item => {
