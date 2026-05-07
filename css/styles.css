@@ -41,7 +41,9 @@
     box-sizing: border-box;
 }
 
-html {
+html, body {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
     scroll-behavior: smooth;
 }
 
@@ -49,7 +51,6 @@ body {
     font-family: 'Montserrat', sans-serif;
     background-color: var(--bg-base);
     color: var(--text-main);
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -1057,7 +1058,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .s3__zoom-title-container {
-    width: 100%;
+    width: 90vw; /* Margem lateral garantida */
     max-width: 1200px;
     margin-bottom: 24px;
     filter: drop-shadow(0 0 20px rgba(255,255,255,0.1));
