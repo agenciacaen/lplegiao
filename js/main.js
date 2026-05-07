@@ -157,7 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const animateS3 = () => {
             if (!s3InView) return;
 
-            const scrolled = window.scrollY - s3Top;
+            const rect = s3Section.getBoundingClientRect();
+            const scrolled = -rect.top;
             const targetProgress = Math.min(Math.max(scrolled / s3Scrollable, 0), 1);
             
             const diff = targetProgress - s3CurrentProgress;
@@ -169,11 +170,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const zoomProgress = s3CurrentProgress;
             
-            // Curva de zoom mais suave
-            const scale = 1 + (Math.pow(zoomProgress, 3) * MAX_SCALE);
+            // Curva de zoom mais rápida (potência 2 em vez de 3)
+            const scale = 1 + (Math.pow(zoomProgress, 2) * MAX_SCALE);
             
-            // Fade out mais gradual
-            const zoomOpacity = zoomProgress < 0.3 ? 1 : 1 - ((zoomProgress - 0.3) / 0.5);
+            // Fade out
+            const zoomOpacity = zoomProgress < 0.4 ? 1 : 1 - ((zoomProgress - 0.4) / 0.4);
             
             // Aplicar transformações
             s3ZoomLayer.style.transform = `translate3d(0,0,0) scale3d(${scale}, ${scale}, 1) rotate(0.01deg)`;
@@ -262,8 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let progress = -rect.top / (sectionHeight - viewHeight);
             progress = Math.min(Math.max(progress, 0), 1);
 
-            // 1. FASE 1: Animação de letras (0% a 30% do progresso)
-            const textProgress = Math.min(progress / 0.3, 1);
+            // 1. FASE 1: Animação de letras (0% a 20% do progresso - Mais rápido)
+            const textProgress = Math.min(progress / 0.2, 1);
             const totalLetters = allLetters.length;
             const activeCount = Math.floor(textProgress * totalLetters);
             
@@ -275,9 +276,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // 2. FASE DE TRANSIÇÃO (30% a 45%)
-            if (progress > 0.3) {
-                const transProgress = Math.min((progress - 0.3) / 0.15, 1);
+            // 2. FASE DE TRANSIÇÃO (20% a 35%)
+            if (progress > 0.2) {
+                const transProgress = Math.min((progress - 0.2) / 0.15, 1);
                 
                 // Título desaparece e sobe MAIS RÁPIDO para não sobrepor
                 if (s4TitleSticky) {
@@ -290,15 +291,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Conteúdo aparece e sobe (transição mais suave)
                 if (s4ContentReveal) {
-                    const contentOpacity = Math.min(progress > 0.35 ? (progress - 0.35) / 0.1 : 0, 1);
+                    const contentOpacity = Math.min(progress > 0.25 ? (progress - 0.25) / 0.1 : 0, 1);
                     s4ContentReveal.style.opacity = contentOpacity;
                     s4ContentReveal.style.visibility = contentOpacity > 0 ? 'visible' : 'hidden';
                     s4ContentReveal.style.transform = `translateY(${(1 - contentOpacity) * 100}px)`;
                 }
 
                 // 3. FASE DA TIMELINE
-                if (progress > 0.42) {
-                    let lineProgress = (progress - 0.42) / 0.55;
+                if (progress > 0.32) {
+                    let lineProgress = (progress - 0.32) / 0.65;
                     lineProgress = Math.min(Math.max(lineProgress, 0), 1);
 
                     if (s4TimelineLineActive) {
